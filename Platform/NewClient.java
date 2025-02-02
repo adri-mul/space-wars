@@ -2,10 +2,7 @@ package Platform;
 
 import java.net.*;
 
-import javax.swing.JFrame;
-
 import java.io.*;
-import java.awt.Color;
 import java.awt.event.*;
 
 public class NewClient {
@@ -13,16 +10,11 @@ public class NewClient {
     public static void main(String[] args) {
         String hostname = "localhost";
         int port = 9090;
-        Color black = new Color(0, 0, 0);
 
         // Initialize socket and input/output streams
         try (Socket socket = new Socket(hostname, port)) {
             System.out.println("Connected to server");
-            JFrame gameFrame = new JFrame("Client");
-            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            gameFrame.getContentPane().setBackground(black);
-            gameFrame.setVisible(true);
-            gameFrame.setSize(600,450);
+            ClientViewer cViewer = new ClientViewer();
             
             // Sends output to the socket
             OutputStream output = socket.getOutputStream();
@@ -35,7 +27,7 @@ public class NewClient {
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-                gameFrame.addKeyListener(new KeyListener() {
+                cViewer.getGameFrame().addKeyListener(new KeyListener() {
                     @Override
                     public void keyTyped(KeyEvent e) {
                     }
@@ -66,7 +58,7 @@ public class NewClient {
                 keyPressed = reader.readLine();
                 //System.out.println("Key: " + key);
             } while (keyPressed != null);
-            gameFrame.dispose();
+            cViewer.getGameFrame().dispose();
             output.close();
             socket.close();
         } catch (UnknownHostException uhE) {
