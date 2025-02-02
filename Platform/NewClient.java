@@ -5,6 +5,7 @@ import java.net.*;
 import javax.swing.JFrame;
 
 import java.io.*;
+import java.awt.Color;
 import java.awt.event.*;
 
 public class NewClient {
@@ -12,12 +13,14 @@ public class NewClient {
     public static void main(String[] args) {
         String hostname = "localhost";
         int port = 9090;
+        Color black = new Color(0, 0, 0);
 
         // Initialize socket and input/output streams
         try (Socket socket = new Socket(hostname, port)) {
             System.out.println("Connected to server");
             JFrame gameFrame = new JFrame("Client");
             gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            gameFrame.getContentPane().setBackground(black);
             gameFrame.setVisible(true);
             gameFrame.setSize(600,450);
             
