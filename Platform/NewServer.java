@@ -2,45 +2,13 @@ package Platform;
 
 // Demonstrating Server-side Programming
 import java.net.*;
+import javax.swing.Timer;
+
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
 
 public class NewServer {
-  
-    // Initialize socket and input stream
-    private Socket socket = null;
-    private ServerSocket ss = null;
-
-    // Constructor with port
-    public NewServer(int port) {
-        // Starts server and waits for a connection
-        try
-        {
-            ss = new ServerSocket(port);
-            System.out.println("Server started");
-
-            System.out.println("Waiting for a client ...");
-
-            socket = ss.accept();
-            System.out.println("Client accepted");
-
-            // buffered reader to translate input stream from client to list
-            BufferedReader sReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("reader initialized");
-            try {
-                System.out.println(sReader.readLine());
-            } catch (IOException i) {
-                i.printStackTrace();
-            }
-            System.out.println("Received msg from client");
-
-        }
-        catch(IOException i)
-        {
-            i.printStackTrace();
-        }
-    }
-
     public static void main(String args[])
     {
         int port = 9090;
@@ -59,18 +27,20 @@ public class NewServer {
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
  
-                OutputStream output = socket.getOutputStream();
-                PrintWriter writer = new PrintWriter(output, false);
+                //OutputStream output = socket.getOutputStream();
+                //PrintWriter writer = new PrintWriter(output, false);
 
                 // variable to collect commands from client
                 String text;
                 
                 do {
                     text = reader.readLine();
-                    writer.println(text);
-                    System.out.println("Server recieved command: " + text);
+                    //writer.println(text);
+                    if (text != null) {
+                        System.out.println("Server recieved command: " + text);
+                    }
  
-                } while (!text.equals(Character.toString(KeyEvent.VK_SLASH)));
+                } while (text == null || text != "player0:0,0");
                 
                 run = false;
             }

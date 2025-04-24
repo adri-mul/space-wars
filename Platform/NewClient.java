@@ -6,7 +6,7 @@ import java.io.*;
 import java.awt.event.*;
 
 public class NewClient {
-
+    /*
     public static void main(String[] args) {
         String hostname = "localhost";
         int port = 9090;
@@ -14,7 +14,7 @@ public class NewClient {
         // Initialize socket and input/output streams
         try (Socket socket = new Socket(hostname, port)) {
             System.out.println("Connected to server");
-            ClientViewer cViewer = new ClientViewer();
+            Board board = new MovingSpriteEx().getBoard();
             
             // Sends output to the socket
             OutputStream output = socket.getOutputStream();
@@ -66,5 +66,5 @@ public class NewClient {
         } catch (IOException ioE) {
             System.out.println(ioE.getMessage() + "\n" + ioE.getStackTrace());
         } 
-    }
+    }*/
 }
