@@ -56,8 +56,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void step() {
+        //System.out.println("Ship Coords Before: " + spaceShip.getX() + ", " + spaceShip.getY());
         spaceShip.move();
-
+        //System.out.println("Ship Coords After: " + spaceShip.getX() + ", " + spaceShip.getY());
         repaint(spaceShip.getX()-2, spaceShip.getY()-2, spaceShip.getWidth()+4, spaceShip.getHeight()+4);
     }
 

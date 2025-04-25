@@ -11,6 +11,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.time.LocalTime;
 
 import javax.swing.ImageIcon;
 
@@ -26,10 +29,13 @@ public class SpaceShip {
     private int imgHeight;
     private Image image;
     public Boolean[] isKeyPressed;
+    private Timer timer;
+    private TimerTask task;
     // constants
     public final String HOSTNAME = "localhost";
     public final int PORT = 9090;
     public final String NAME = "player0";
+    public final int MAX_SPEED = 4;
     // Sends output to the socket
     private OutputStream output;
     private PrintWriter writer;
@@ -39,6 +45,16 @@ public class SpaceShip {
 
     // main constructor
     public SpaceShip() {
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                System.out.println("drag applied: " + LocalTime.now());
+                // applies a fricton force that slows down the space ship over time
+                dx -= dx>0? 1:dx<0? -1:0;
+                dy -= dy>0? 1:dy<0? -1:0;
+            }
+        };
+        timer.schedule(task, 0, 1000);
         health = 10;
         energy = 10;
         isKeyPressed = new Boolean[9];
@@ -74,6 +90,7 @@ public class SpaceShip {
         int oldY = y;
         x += dx;
         y += dy;
+
         // keep the ship from sending redundant information
         if (x != oldX || y != oldY) {
             // write to server the position of the player
@@ -84,16 +101,16 @@ public class SpaceShip {
     // change dx and dy based on key pressed (TODO want left/right arrow keys to be turn)
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-
+        //System.out.println("key pressed");
         switch (key) { /*(1/(dx==0 ? 1: Math.abs(dx))) */
-            case KeyEvent.VK_W: dy -= Math.abs(dy)>=2?0:1; isKeyPressed[0] = true; break;
-            case KeyEvent.VK_A: dx -= Math.abs(dx)>=2?0:1; isKeyPressed[1] = true; break;
-            case KeyEvent.VK_S: dy += Math.abs(dy)>=2?0:1; isKeyPressed[2] = true; break;
-            case KeyEvent.VK_D: dx += Math.abs(dx)>=2?0:1; isKeyPressed[3] = true; break;
-            case KeyEvent.VK_UP: dy -= Math.abs(dy)>=2?0:1; isKeyPressed[4] = true; break;
-            case KeyEvent.VK_LEFT: dx -= Math.abs(dx)>=2?0:1; isKeyPressed[5] = true; break;
-            case KeyEvent.VK_DOWN: dy += Math.abs(dy)>=2?0:1; isKeyPressed[6] = true; break;
-            case KeyEvent.VK_RIGHT: dx += Math.abs(dx)>=2?0:1; isKeyPressed[7] = true; break;
+            case KeyEvent.VK_W: dy -= Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[0] = true; break;
+            case KeyEvent.VK_A: dx -= Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[1] = true; break;
+            case KeyEvent.VK_S: dy += Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[2] = true; break;
+            case KeyEvent.VK_D: dx += Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[3] = true; break;
+            case KeyEvent.VK_UP: dy -= Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[4] = true; break;
+            case KeyEvent.VK_LEFT: dx -= Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[5] = true; break;
+            case KeyEvent.VK_DOWN: dy += Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[6] = true; break;
+            case KeyEvent.VK_RIGHT: dx += Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[7] = true; break;
             case KeyEvent.VK_SPACE: isKeyPressed[8] = true; break;
         }
 
@@ -101,6 +118,7 @@ public class SpaceShip {
 
     // reset dx and dy
     public void keyReleased(KeyEvent e) {
+        /* 
         int key = e.getKeyCode();
 
         switch (key) {
@@ -114,6 +132,7 @@ public class SpaceShip {
             case KeyEvent.VK_RIGHT: dx = 0; isKeyPressed[7] = false; break;
             case KeyEvent.VK_SPACE: isKeyPressed[8] = false; break;
         }
+        */
     }
 
     // Accessor methods (getters and setters)
