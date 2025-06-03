@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.time.LocalTime;
 
 import javax.swing.ImageIcon;
 
@@ -31,11 +30,13 @@ public class SpaceShip {
     public Boolean[] isKeyPressed;
     private Timer timer;
     private TimerTask task;
+    private Board board;
     // constants
     public final String HOSTNAME = "localhost";
     public final int PORT = 9090;
     public final String NAME = "player0";
     public final int MAX_SPEED = 4;
+    public final long DRAG_INTERVAL = 500;
     // Sends output to the socket
     private OutputStream output;
     private PrintWriter writer;
@@ -44,17 +45,19 @@ public class SpaceShip {
     private Socket socket;
 
     // main constructor
-    public SpaceShip() {
+    public SpaceShip(Board board) {
+        this.board = board;
         timer = new Timer();
         task = new TimerTask() {
             public void run() {
-                System.out.println("drag applied: " + LocalTime.now());
-                // applies a fricton force that slows down the space ship over time
+                //System.out.println("drag applied: " + LocalTime.now());
+                // applies a drag force that slows down the space ship over time
                 dx -= dx>0? 1:dx<0? -1:0;
                 dy -= dy>0? 1:dy<0? -1:0;
             }
         };
-        timer.schedule(task, 0, 1000);
+        // runs the task every DRAG_INTERVAL milliseconds
+        timer.schedule(task, 0, DRAG_INTERVAL);
         health = 10;
         energy = 10;
         isKeyPressed = new Boolean[9];
@@ -101,17 +104,24 @@ public class SpaceShip {
     // change dx and dy based on key pressed (TODO want left/right arrow keys to be turn)
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        //System.out.println("key pressed");
-        switch (key) { /*(1/(dx==0 ? 1: Math.abs(dx))) */
-            case KeyEvent.VK_W: dy -= Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[0] = true; break;
-            case KeyEvent.VK_A: dx -= Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[1] = true; break;
-            case KeyEvent.VK_S: dy += Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[2] = true; break;
-            case KeyEvent.VK_D: dx += Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[3] = true; break;
-            case KeyEvent.VK_UP: dy -= Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[4] = true; break;
-            case KeyEvent.VK_LEFT: dx -= Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[5] = true; break;
-            case KeyEvent.VK_DOWN: dy += Math.abs(dy)>=MAX_SPEED?0:1; isKeyPressed[6] = true; break;
-            case KeyEvent.VK_RIGHT: dx += Math.abs(dx)>=MAX_SPEED?0:1; isKeyPressed[7] = true; break;
-            case KeyEvent.VK_SPACE: isKeyPressed[8] = true; break;
+
+        // switch for left/right movement
+        switch (key) {
+            case KeyEvent.VK_A: dx -= Math.abs(dx)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_D: dx += Math.abs(dx)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_LEFT: dx -= Math.abs(dx)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_RIGHT: dx += Math.abs(dx)>=MAX_SPEED?0:1; break;
+        }
+        // switch for up/down movement
+        switch (key) {
+            case KeyEvent.VK_W: dy -= Math.abs(dy)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_S: dy += Math.abs(dy)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_UP: dy -= Math.abs(dy)>=MAX_SPEED?0:1; break;
+            case KeyEvent.VK_DOWN: dy += Math.abs(dy)>=MAX_SPEED?0:1; break;
+        }
+        // switch for other
+        switch (key) {
+            case KeyEvent.VK_SPACE: board.getBoardLasers().add(new Laser(this)); break;
         }
 
     }
@@ -142,6 +152,14 @@ public class SpaceShip {
 
     public int getY() {
         return y;
+    }
+
+    public int getVelX() {
+        return dx;
+    }
+
+    public int getVelY() {
+        return dy;
     }
 
     public int getWidth() {
