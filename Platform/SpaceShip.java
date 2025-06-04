@@ -1,7 +1,6 @@
 package Platform;
 
 // dependencies
-import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,19 +13,8 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.ImageIcon;
-
 // class to contain spaceship objects
-public class SpaceShip {
-    private int dx;
-    private int dy;
-    private int x = 300;
-    private int y = 450/2;
-    private int health;
-    private int energy;
-    private int imgWidth;
-    private int imgHeight;
-    private Image image;
+public class SpaceShip extends Entity {
     public Boolean[] isKeyPressed;
     private Timer timer;
     private TimerTask task;
@@ -46,6 +34,7 @@ public class SpaceShip {
 
     // main constructor
     public SpaceShip(Board board) {
+        super();
         this.board = board;
         timer = new Timer();
         task = new TimerTask() {
@@ -58,10 +47,12 @@ public class SpaceShip {
         };
         // runs the task every DRAG_INTERVAL milliseconds
         timer.schedule(task, 0, DRAG_INTERVAL);
-        health = 10;
-        energy = 10;
         isKeyPressed = new Boolean[9];
-        loadImage();
+        connectToServer();
+        writer.println("a");
+    }
+
+    private void connectToServer() {
         // Initialize socket and input/output streams
         try {
             socket = new Socket(HOSTNAME, PORT);
@@ -77,17 +68,9 @@ public class SpaceShip {
         } catch (IOException ioE) {
             System.out.println(ioE.getMessage() + "\n" + ioE.getStackTrace());
         } 
-        writer.println("a");
     }
 
-    private void loadImage() {
-        ImageIcon imageIcon = new ImageIcon("c:/Users/adria/Downloads/Spaceship-PNG-File-1398389704 (Custom) (1).png");
-        image = imageIcon.getImage();
-
-        imgWidth = image.getWidth(null);
-        imgHeight = image.getHeight(null);
-    }
-
+    @Override
     public void move() {
         int oldX = x;
         int oldY = y;
@@ -128,57 +111,5 @@ public class SpaceShip {
 
     // reset dx and dy
     public void keyReleased(KeyEvent e) {
-        /* 
-        int key = e.getKeyCode();
-
-        switch (key) {
-            case KeyEvent.VK_W: dy = 0; isKeyPressed[0] = false; break;
-            case KeyEvent.VK_A: dx = 0; isKeyPressed[1] = false; break;
-            case KeyEvent.VK_S: dy = 0; isKeyPressed[2] = false; break;
-            case KeyEvent.VK_D: dx = 0; isKeyPressed[3] = false; break;
-            case KeyEvent.VK_UP: dy = 0; isKeyPressed[4] = false; break;
-            case KeyEvent.VK_LEFT: dx = 0; isKeyPressed[5] = false; break;
-            case KeyEvent.VK_DOWN: dy = 0; isKeyPressed[6] = false; break;
-            case KeyEvent.VK_RIGHT: dx = 0; isKeyPressed[7] = false; break;
-            case KeyEvent.VK_SPACE: isKeyPressed[8] = false; break;
-        }
-        */
-    }
-
-    // Accessor methods (getters and setters)
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getVelX() {
-        return dx;
-    }
-
-    public int getVelY() {
-        return dy;
-    }
-
-    public int getWidth() {
-        return imgWidth;
-    }
-    
-    public int getHeight() {
-        return imgHeight;
-    }    
-
-    public Image getImage() {
-        return image;
-    }
-
-    public int getShipHealth() {
-        return health;
-    }
-
-    public int getShipEnergy() {
-        return energy;
     }
 }

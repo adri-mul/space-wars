@@ -61,7 +61,7 @@ public class Board extends JPanel implements ActionListener {
         g2d.drawImage(spaceShip.getImage(), spaceShip.getX(), spaceShip.getY(), this);
         //debugging
         for (Laser laser : lasers) {
-            g2d.drawImage(Laser.image, laser.getX(), laser.getY(), this);
+            g2d.drawImage(laser.image, laser.getX(), laser.getY(), this);
         }
     }
 
@@ -73,6 +73,9 @@ public class Board extends JPanel implements ActionListener {
 
     public void step() {
         spaceShip.move();
+        for (Laser laser : lasers) {
+            laser.move();
+        }
 
             // Updates the pixels of the spaceship and a small box surrounding it that is determined based on the velocity
             //repaint(Math.abs(spaceShip.getX()-spaceShip.getWidth()), 

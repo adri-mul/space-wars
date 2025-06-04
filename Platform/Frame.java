@@ -32,23 +32,6 @@ public class Frame extends JFrame {
         EventQueue.invokeLater(() -> {
             Frame gameFrame = new Frame();
             gameFrame.setVisible(true);
-
-            // Check key state periodically
-            /*new Thread(() -> {
-                SpaceShip spaceShip = gameFrame.getBoard().getSpaceShip();
-                System.out.println("reached thread");
-                while (spaceShip.isKeyPressed[0] != null) {
-                    System.out.println("reached if statement");
-                    if (!spaceShip.isKeyPressed[0]) {
-                        gameFrame.getBoard().getSpaceShip().dy -= 1;
-                    }
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                } 
-            }).start();*/
         });
         
     }
