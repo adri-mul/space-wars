@@ -11,6 +11,7 @@ public class Entity {
     protected int y;
     protected int health;
     protected int energy;
+    protected int type;
     protected int imgWidth;
     protected int imgHeight;
     protected Image image;
@@ -23,6 +24,7 @@ public class Entity {
         dy = 0;
         health = 10;
         energy = 10;
+        type = 1; // Default type for Entity
         loadImage("c:/Users/adria/Downloads/Spaceship-PNG-File-1398389704 (Custom) (1).png");
     }
 
@@ -86,4 +88,12 @@ public class Entity {
         return energy;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    // ToString method
+    public String toString() {
+        return String.format("%d %d %d %d", getType(), getX(), getY(), getHealth());
+    }
 }

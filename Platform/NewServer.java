@@ -20,35 +20,54 @@ public class NewServer {
             System.out.println("Waiting for client...");
 
             // connect client to server socket
-            Socket socket = serverSocket.accept();
+            Socket clientSocket = serverSocket.accept();
             System.out.println("New client connected");
             boolean run = true;
-            while (run) {
-                InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
- 
-                //OutputStream output = socket.getOutputStream();
-                //PrintWriter writer = new PrintWriter(output, false);
 
+            // Setup input and output streams for communication with the client
+            BufferedReader clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter clientOutput = new PrintWriter(clientSocket.getOutputStream(), true);
+            while (run) {
+ 
                 // variable to collect commands from client
                 String text;
                 
+                // keeps reading input from client until it receives a non-empty message
                 do {
-                    text = reader.readLine();
+                    // Read input from client
+                    text = clientInput.readLine();
                     //writer.println(text);
                     if (text != null) {
-                        System.out.println("Server recieved command: " + text);
+                        System.out.println("Server received message: " + text);
+                        System.out.println("Server finished receiving message.");
                     }
+
+                    // TODO Creating a new board here seems to get System output from the client side as well
+                    // since outputs aren't separated by instance of board, but rather shared
+                    sendDataToClient(clientOutput, new SpaceShip(new Board()));
  
-                } while (text == null || text != "player0:0,0");
+                } while (text == null || text.isEmpty());
                 
-                run = false;
+                if (text.equals("exit")) {
+                    System.out.println("Server received exit command. Shutting down...");
+                    run = false;
+                }
             }
-            socket.close();
+            clientSocket.close();
 
         } catch (IOException ex) {
             System.out.println("Server exception: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    // Sends a report of an entity
+    // Format: "Name Type x-pos y-pos Health"
+    // Name: String
+    // Type: 4-digit Integer w/ format xxxx
+    // x-pos/y-pos: 2-digit Integer w/ format xx
+    // Health: 3-digit Integer w/ format xxx
+    public static void sendDataToClient(PrintWriter output, Entity e) {
+        output.println(e.toString());
     }
 }

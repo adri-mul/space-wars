@@ -2,14 +2,6 @@ package Platform;
 
 // dependencies
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,21 +12,16 @@ public class SpaceShip extends Entity {
     private TimerTask task;
     private Board board;
     // constants
-    public final String HOSTNAME = "localhost";
-    public final int PORT = 9090;
-    public final String NAME = "player0";
+    
+    public final String NAME = "SpaceShip0";
     public final int MAX_SPEED = 4;
     public final long DRAG_INTERVAL = 500;
-    // Sends output to the socket
-    private OutputStream output;
-    private PrintWriter writer;
-    private InputStream input;
-    private BufferedReader reader;
-    private Socket socket;
+    
 
     // main constructor
     public SpaceShip(Board board) {
         super();
+        type = 2;
         this.board = board;
         timer = new Timer();
         task = new TimerTask() {
@@ -48,40 +35,6 @@ public class SpaceShip extends Entity {
         // runs the task every DRAG_INTERVAL milliseconds
         timer.schedule(task, 0, DRAG_INTERVAL);
         isKeyPressed = new Boolean[9];
-        connectToServer();
-        writer.println("a");
-    }
-
-    private void connectToServer() {
-        // Initialize socket and input/output streams
-        try {
-            socket = new Socket(HOSTNAME, PORT);
-            System.out.println("Connected to server");
-            // initialize output and input stream
-            output = socket.getOutputStream();
-            writer = new PrintWriter(output, true);
-            
-            input = socket.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(input));
-        } catch (UnknownHostException uhE) {
-            System.out.println(uhE.getMessage() + "\n" + uhE.getStackTrace());
-        } catch (IOException ioE) {
-            System.out.println(ioE.getMessage() + "\n" + ioE.getStackTrace());
-        } 
-    }
-
-    @Override
-    public void move() {
-        int oldX = x;
-        int oldY = y;
-        x += dx;
-        y += dy;
-
-        // keep the ship from sending redundant information
-        if (x != oldX || y != oldY) {
-            // write to server the position of the player
-            writer.println(NAME + ":" + x + "," + y);
-        }
     }
 
     // change dx and dy based on key pressed (TODO want left/right arrow keys to be turn)
@@ -104,12 +57,19 @@ public class SpaceShip extends Entity {
         }
         // switch for other
         switch (key) {
-            case KeyEvent.VK_SPACE: board.getBoardLasers().add(new Laser(this)); break;
+            case KeyEvent.VK_SPACE: board.getBoardEntities().add(new Laser(this)); break;
+            case KeyEvent.VK_M: board.getBoardEntities().add(new SpaceShip(board)); break;
         }
 
     }
 
     // reset dx and dy
     public void keyReleased(KeyEvent e) {
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return String.format("%s %s", NAME, super.toString());
     }
 }

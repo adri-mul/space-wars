@@ -8,6 +8,16 @@ public class Laser extends Entity {
         y = ship.getY();
         dx = 0;
         dy = -5;
+        type = 3;
+    }
+
+    public Laser() {
+        super("C:/Users/adria/Downloads/transparent_laser_3.png");
+        x = 0;
+        y = 0;
+        dx = 0;
+        dy = -5;
+        type = 3;
     }
 
     // Kill entity if off-screen
