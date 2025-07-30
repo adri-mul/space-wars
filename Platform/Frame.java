@@ -35,6 +35,5 @@ public class Frame extends JFrame {
             Frame gameFrame = new Frame();
             gameFrame.setVisible(true);
         });
-        
     }
 }
